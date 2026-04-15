@@ -5,548 +5,741 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CNHS — Concepcion National High School Enrollment System</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --navy:#0B1F3A;--navy-mid:#122847;--navy-light:#1C3A5E;
-  --gold:#C8931A;--gold-light:#E8AC28;
-  --sky:#1A6FA8;--sky-light:#2E8FCC;
-  --white:#FFFFFF;--off:#F5F8FC;
-  --g100:#EAF0F8;--g200:#C8D5E5;--g400:#7A90AB;--g600:#3D506A;--g800:#1C2B3A;
-  --green:#1a9e6a;--green-bg:rgba(61,189,138,.12);
-  --r:12px;--rs:8px;
-}
+:root{--navy:#0B1F3A;--navy2:#122847;--navy3:#1C3A5E;--gold:#C8931A;--gold2:#E8AC28;--white:#FFF;--g400:#7A90AB;--g800:#1C2B3A;--green:#1a9e6a;--r:12px;--rs:8px}
 body{font-family:'DM Sans',sans-serif;background:var(--navy);min-height:100vh;overflow-x:hidden;color:var(--g800)}
-
 .bg{position:fixed;inset:0;z-index:0;background:linear-gradient(150deg,#09192E 0%,#0E2240 45%,#132D52 100%);overflow:hidden}
 .bg-orb1{position:absolute;width:700px;height:700px;top:-200px;right:-150px;background:radial-gradient(circle,rgba(200,147,26,.13) 0%,transparent 70%);border-radius:50%;animation:d1 12s ease-in-out infinite alternate}
 .bg-orb2{position:absolute;width:500px;height:500px;bottom:-100px;left:-100px;background:radial-gradient(circle,rgba(26,111,168,.16) 0%,transparent 70%);border-radius:50%;animation:d2 9s ease-in-out infinite alternate}
-.bg-orb3{position:absolute;width:300px;height:300px;top:40%;left:35%;background:radial-gradient(circle,rgba(200,147,26,.06) 0%,transparent 70%);border-radius:50%;animation:d3 14s ease-in-out infinite alternate}
 .bg-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:48px 48px;animation:gm 25s linear infinite}
 @keyframes d1{to{transform:translate(30px,40px) scale(1.08)}}
 @keyframes d2{to{transform:translate(-20px,30px) scale(1.05)}}
-@keyframes d3{to{transform:translate(20px,-25px)}}
 @keyframes gm{to{background-position:48px 48px}}
-
 .app{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column}
-
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 36px;background:rgba(11,31,58,.55);backdrop-filter:blur(12px);border-bottom:1px solid rgba(200,147,26,.18);animation:su .5s ease both}
-.topbar-brand{display:flex;align-items:center;gap:14px}
-.logo-shield{width:46px;height:46px;background:var(--gold);clip-path:polygon(50% 0%,100% 20%,100% 80%,50% 100%,0% 80%,0% 20%);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;font-size:15px;color:var(--navy);flex-shrink:0;animation:pl 3s ease-in-out infinite}
-@keyframes pl{0%,100%{box-shadow:0 0 0 0 rgba(200,147,26,0)}50%{box-shadow:0 0 0 7px rgba(200,147,26,.18)}}
-.brand-name{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--white);line-height:1.15}
-.brand-sub{font-size:11px;color:rgba(200,147,26,.9);letter-spacing:.06em;text-transform:uppercase;font-weight:500}
-.topbar-right{display:flex;align-items:center;gap:18px}
-.sy-badge{font-size:12px;font-weight:500;color:rgba(255,255,255,.6);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);padding:5px 12px;border-radius:20px}
-.sy-badge span{color:var(--gold-light);font-weight:600}
-#clock{font-size:13px;font-weight:500;color:rgba(255,255,255,.5);min-width:85px;text-align:right}
-
-.main{flex:1;padding:32px 36px;display:flex;flex-direction:column;gap:24px}
-
-.hero{background:rgba(255,255,255,.04);border:1px solid rgba(200,147,26,.22);border-radius:16px;padding:30px 36px;display:flex;align-items:center;justify-content:space-between;gap:24px;animation:fu .6s ease .1s both;position:relative;overflow:hidden}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:13px 32px;background:rgba(11,31,58,.6);backdrop-filter:blur(14px);border-bottom:1px solid rgba(200,147,26,.18);position:sticky;top:0;z-index:50;flex-wrap:wrap;gap:8px}
+.logo-shield{width:44px;height:44px;background:var(--gold);clip-path:polygon(50% 0%,100% 20%,100% 80%,50% 100%,0% 80%,0% 20%);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;font-size:15px;color:var(--navy);flex-shrink:0;animation:pl 3s ease-in-out infinite}
+@keyframes pl{0%,100%{filter:drop-shadow(0 0 0px rgba(200,147,26,0))}50%{filter:drop-shadow(0 0 10px rgba(200,147,26,.45))}}
+.brand-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#fff;line-height:1.15}
+.brand-sub{font-size:10px;color:rgba(200,147,26,.9);letter-spacing:.07em;text-transform:uppercase;font-weight:600}
+.nav-tabs{display:flex;gap:4px}
+.nav-tab{padding:7px 15px;border-radius:20px;border:none;background:transparent;color:rgba(255,255,255,.42);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s}
+.nav-tab:hover{color:rgba(255,255,255,.8)}
+.nav-tab.active{background:rgba(200,147,26,.14);color:var(--gold2);border:1px solid rgba(200,147,26,.22)}
+.sy-badge{font-size:11px;color:rgba(255,255,255,.48);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);padding:4px 10px;border-radius:20px}
+.sy-badge span{color:var(--gold2);font-weight:600}
+#clock{font-size:12px;color:rgba(255,255,255,.38);min-width:75px;text-align:right}
+.page{display:none}.page.active{display:block}
+.main{flex:1;padding:26px 32px;display:flex;flex-direction:column;gap:20px}
+.hero{background:rgba(255,255,255,.04);border:1px solid rgba(200,147,26,.22);border-radius:16px;padding:26px 32px;display:flex;align-items:center;justify-content:space-between;gap:20px;position:relative;overflow:hidden;animation:fu .5s ease both}
 .hero::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(200,147,26,.07) 0%,transparent 60%);pointer-events:none}
-.hero-left h1{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--white);line-height:1.25;margin-bottom:6px}
-.hero-left h1 span{color:var(--gold-light)}
-.hero-left p{font-size:13px;color:rgba(255,255,255,.5);max-width:480px;line-height:1.65}
-.hero-stats{display:flex;gap:16px;flex-shrink:0}
-.hstat{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--r);padding:14px 22px;text-align:center;min-width:95px;transition:transform .2s,background .2s;cursor:default}
-.hstat:hover{transform:translateY(-3px);background:rgba(255,255,255,.09)}
-.hstat-num{font-size:24px;font-weight:700;color:var(--gold-light);font-family:'Playfair Display',serif;line-height:1}
-.hstat-lbl{font-size:10px;color:rgba(255,255,255,.45);margin-top:4px;letter-spacing:.05em;text-transform:uppercase}
-
-.steps-nav{display:flex;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:var(--r);overflow:hidden;animation:fu .6s ease .2s both}
-.step-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:9px;padding:13px 10px;cursor:pointer;border:none;background:transparent;color:rgba(255,255,255,.4);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;border-right:1px solid rgba(255,255,255,.07);transition:all .25s;position:relative}
+.hero h1{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:#fff;margin-bottom:5px}
+.hero h1 span{color:var(--gold2)}
+.hero p{font-size:13px;color:rgba(255,255,255,.46);max-width:460px;line-height:1.65}
+.hero-stats{display:flex;gap:12px;flex-shrink:0}
+.hstat{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--r);padding:12px 18px;text-align:center;min-width:88px;transition:transform .2s;cursor:default}
+.hstat:hover{transform:translateY(-3px)}
+.hstat-num{font-size:22px;font-weight:700;color:var(--gold2);font-family:'Playfair Display',serif;line-height:1}
+.hstat-lbl{font-size:10px;color:rgba(255,255,255,.38);margin-top:4px;letter-spacing:.05em;text-transform:uppercase}
+.steps-nav{display:flex;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:var(--r);overflow:hidden;animation:fu .5s ease .1s both}
+.step-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;padding:11px 6px;cursor:pointer;border:none;background:transparent;color:rgba(255,255,255,.36);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;border-right:1px solid rgba(255,255,255,.07);transition:all .25s;position:relative}
 .step-btn:last-child{border-right:none}
-.step-btn:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.75)}
-.step-btn.active{background:rgba(200,147,26,.14);color:var(--gold-light)}
-.step-btn.done{color:rgba(80,210,150,.8)}
-.step-btn.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--gold)}
-.step-btn.done::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:#3dbd8a}
-.step-num{width:21px;height:21px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:rgba(255,255,255,.1);color:inherit;flex-shrink:0;transition:all .25s}
+.step-btn:hover:not(.active){background:rgba(255,255,255,.04)}
+.step-btn.active{background:rgba(200,147,26,.12);color:var(--gold2)}
+.step-btn.done{color:rgba(80,210,150,.72)}
+.step-btn.active::after,.step-btn.done::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px}
+.step-btn.active::after{background:var(--gold)}
+.step-btn.done::after{background:#3dbd8a}
+.step-num{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;background:rgba(255,255,255,.1);color:inherit;flex-shrink:0;transition:all .25s}
 .step-btn.active .step-num{background:var(--gold);color:var(--navy)}
 .step-btn.done .step-num{background:#3dbd8a;color:#fff}
-
-.prog-bar{height:3px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden;margin-bottom:5px}
+.prog-bar{height:3px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden;margin-bottom:4px}
 .prog-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .45s cubic-bezier(.4,0,.2,1)}
-.prog-lbl{font-size:11px;color:rgba(255,255,255,.3);text-align:right}
-
-.panel{display:none;animation:fu .4s ease both}
-.panel.active{display:block}
-
-.card{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:28px 32px;backdrop-filter:blur(8px)}
-.card-title{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:var(--white);margin-bottom:3px}
-.card-sub{font-size:13px;color:rgba(255,255,255,.4);margin-bottom:22px}
-
-.sec-head{display:flex;align-items:center;gap:9px;margin:22px 0 14px}
-.sec-head::before{content:'';display:block;width:3px;height:17px;background:var(--gold);border-radius:2px}
-.sec-head h3{font-size:12px;font-weight:600;color:var(--gold-light);letter-spacing:.07em;text-transform:uppercase}
-
-.fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+.prog-lbl{font-size:11px;color:rgba(255,255,255,.28);text-align:right}
+.panel{display:none;animation:fu .35s ease both}.panel.active{display:block}
+.card{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:24px 28px}
+.card-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#fff;margin-bottom:3px}
+.card-sub{font-size:12px;color:rgba(255,255,255,.38);margin-bottom:18px}
+.sec-head{display:flex;align-items:center;gap:8px;margin:18px 0 12px}
+.sec-head::before{content:'';display:block;width:3px;height:16px;background:var(--gold);border-radius:2px}
+.sec-head h3{font-size:11px;font-weight:600;color:var(--gold2);letter-spacing:.08em;text-transform:uppercase}
+.fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
 .full{grid-column:1/-1}
 .fld{display:flex;flex-direction:column;gap:5px}
-.fld label{font-size:11px;font-weight:600;color:rgba(255,255,255,.5);letter-spacing:.05em;text-transform:uppercase}
-.fld input,.fld select,.fld textarea{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);border-radius:var(--rs);padding:10px 13px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--white);outline:none;transition:all .2s;-webkit-appearance:none}
+.fld label{font-size:11px;font-weight:600;color:rgba(255,255,255,.46);letter-spacing:.05em;text-transform:uppercase}
+.fld input,.fld select,.fld textarea{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:var(--rs);padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:#fff;outline:none;transition:all .2s;-webkit-appearance:none}
 .fld select option{background:#1C3A5E;color:#fff}
-.fld input::placeholder,.fld textarea::placeholder{color:rgba(255,255,255,.22)}
-.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:rgba(200,147,26,.55);background:rgba(255,255,255,.1);box-shadow:0 0 0 3px rgba(200,147,26,.1)}
-.fld .emsg{font-size:11px;color:#f08080;margin-top:2px;display:none}
+.fld input::placeholder,.fld textarea::placeholder{color:rgba(255,255,255,.18)}
+.fld input:focus,.fld select:focus{border-color:rgba(200,147,26,.5);background:rgba(255,255,255,.1);box-shadow:0 0 0 3px rgba(200,147,26,.1)}
+.fld .emsg{font-size:10px;color:#f08080;margin-top:2px;display:none}
 .fld.err .emsg{display:block}
-.fld.err input,.fld.err select{border-color:rgba(220,80,80,.65)}
-.fld textarea{resize:vertical;min-height:74px}
-
-.rg{display:flex;gap:10px;flex-wrap:wrap}
-.rc{flex:1;min-width:110px;border:1.5px solid rgba(255,255,255,.13);border-radius:var(--rs);padding:10px 13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px}
-.rc:hover{background:rgba(255,255,255,.07)}
-.rc.sel{border-color:var(--gold);background:rgba(200,147,26,.11)}
-.rc input[type=radio]{accent-color:var(--gold);width:14px;height:14px}
-.rc span{font-size:13px;font-weight:500;color:rgba(255,255,255,.78)}
-
-.doc-list{display:flex;flex-direction:column;gap:9px}
-.doc-item{display:flex;align-items:center;gap:13px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:var(--rs);padding:11px 15px;transition:border-color .2s}
-.doc-item:hover{border-color:rgba(200,147,26,.28)}
-.doc-icon{width:35px;height:35px;border-radius:8px;background:rgba(200,147,26,.13);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.doc-icon svg{width:17px;height:17px;stroke:var(--gold-light);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.fld.err input,.fld.err select{border-color:rgba(220,80,80,.6)}
+.fld textarea{resize:vertical;min-height:70px}
+.rg{display:flex;gap:9px;flex-wrap:wrap}
+.rc{flex:1;min-width:110px;border:1.5px solid rgba(255,255,255,.12);border-radius:var(--rs);padding:9px 12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:7px}
+.rc:hover{background:rgba(255,255,255,.06)}
+.rc.sel{border-color:var(--gold);background:rgba(200,147,26,.1)}
+.rc input[type=radio]{accent-color:var(--gold);width:13px;height:13px}
+.rc span{font-size:13px;font-weight:500;color:rgba(255,255,255,.75)}
+.doc-list{display:flex;flex-direction:column;gap:8px}
+.doc-item{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:var(--rs);padding:10px 14px;transition:border-color .2s}
+.doc-item:hover{border-color:rgba(200,147,26,.24)}
+.doc-icon{width:33px;height:33px;border-radius:7px;background:rgba(200,147,26,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.doc-icon svg{width:16px;height:16px;stroke:var(--gold2);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .doc-info{flex:1}
-.doc-name{font-size:13px;font-weight:500;color:rgba(255,255,255,.82)}
-.doc-note{font-size:11px;color:rgba(255,255,255,.38);margin-top:2px}
-.doc-st{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.35);transition:all .25s;white-space:nowrap}
-.doc-st.ok{background:rgba(61,189,138,.14);color:#3dbd8a}
-.ubtn{padding:6px 13px;border-radius:var(--rs);background:rgba(200,147,26,.13);border:1px solid rgba(200,147,26,.3);color:var(--gold-light);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif}
-.ubtn:hover{background:rgba(200,147,26,.23);border-color:var(--gold)}
-
-.smgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
-.smb{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--r);padding:16px 18px}
-.smb h4{font-size:10px;font-weight:600;color:var(--gold-light);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;padding-bottom:9px;border-bottom:1px solid rgba(255,255,255,.07)}
-.smrow{display:flex;justify-content:space-between;align-items:center;padding:4px 0}
-.smrow span:first-child{font-size:12px;color:rgba(255,255,255,.42)}
-.smrow span:last-child{font-size:13px;font-weight:500;color:rgba(255,255,255,.82)}
-
-.tag{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.03em}
+.doc-name{font-size:13px;font-weight:500;color:rgba(255,255,255,.8)}
+.doc-note{font-size:11px;color:rgba(255,255,255,.33);margin-top:1px}
+.doc-st{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.3);transition:all .25s;white-space:nowrap}
+.doc-st.ok{background:rgba(61,189,138,.13);color:#3dbd8a}
+.ubtn{padding:5px 12px;border-radius:var(--rs);background:rgba(200,147,26,.11);border:1px solid rgba(200,147,26,.26);color:var(--gold2);font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif}
+.ubtn:hover{background:rgba(200,147,26,.2)}
+.ubtn:disabled{opacity:.4;cursor:default}
+.smgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.smb{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:var(--r);padding:14px 16px}
+.smb h4{font-size:10px;font-weight:600;color:var(--gold2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:9px;padding-bottom:7px;border-bottom:1px solid rgba(255,255,255,.07)}
+.smrow{display:flex;justify-content:space-between;align-items:flex-start;padding:3px 0;gap:8px}
+.smrow span:first-child{font-size:11px;color:rgba(255,255,255,.36);white-space:nowrap}
+.smrow span:last-child{font-size:12px;font-weight:500;color:rgba(255,255,255,.8);text-align:right}
+.tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600}
 .tag-r{background:rgba(220,80,80,.12);color:#f08080}
 .tag-g{background:rgba(61,189,138,.12);color:#3dbd8a}
-.tag-o{background:rgba(200,147,26,.13);color:var(--gold-light)}
-
-.confirm{background:rgba(61,189,138,.07);border:1px solid rgba(61,189,138,.22);border-radius:16px;padding:32px;text-align:center;display:none;flex-direction:column;align-items:center;gap:11px;margin-top:20px}
+.tag-o{background:rgba(200,147,26,.12);color:var(--gold2)}
+.btn-row{display:flex;gap:10px;justify-content:flex-end;margin-top:22px;flex-wrap:wrap}
+.btn{padding:10px 24px;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;border:none;display:inline-flex;align-items:center;gap:7px}
+.btn-ghost{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.58)}
+.btn-ghost:hover{background:rgba(255,255,255,.1)}
+.btn-primary{background:var(--gold);color:var(--navy);box-shadow:0 4px 14px rgba(200,147,26,.22)}
+.btn-primary:hover:not(:disabled){background:var(--gold2);transform:translateY(-1px)}
+.btn-primary:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.btn-success{background:#1a9e6a;color:#fff;box-shadow:0 4px 12px rgba(26,158,106,.22)}
+.btn-success:hover:not(:disabled){background:#20b878;transform:translateY(-1px)}
+.btn-success:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.28);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.confirm{background:rgba(61,189,138,.07);border:1px solid rgba(61,189,138,.2);border-radius:16px;padding:28px;text-align:center;display:none;flex-direction:column;align-items:center;gap:10px;margin-top:18px}
 .confirm.show{display:flex}
-.c-icon{width:62px;height:62px;border-radius:50%;background:rgba(61,189,138,.13);border:2px solid rgba(61,189,138,.38);display:flex;align-items:center;justify-content:center;animation:cp .5s cubic-bezier(.34,1.56,.64,1) both}
+.c-icon{width:58px;height:58px;border-radius:50%;background:rgba(61,189,138,.13);border:2px solid rgba(61,189,138,.32);display:flex;align-items:center;justify-content:center;animation:cp .5s cubic-bezier(.34,1.56,.64,1) both}
 @keyframes cp{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
-.c-icon svg{width:30px;height:30px;stroke:#3dbd8a;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
-.confirm h2{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#3dbd8a}
-.confirm p{font-size:14px;color:rgba(255,255,255,.5);max-width:380px;line-height:1.6}
-.refcode{font-size:18px;font-weight:700;letter-spacing:.12em;color:var(--gold-light);background:rgba(200,147,26,.09);border:1px dashed rgba(200,147,26,.38);padding:9px 22px;border-radius:var(--rs)}
-
-.btn-row{display:flex;gap:11px;justify-content:flex-end;margin-top:26px;flex-wrap:wrap}
-.btn{padding:12px 28px;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;border:none}
-.btn-g{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.13);color:rgba(255,255,255,.65)}
-.btn-g:hover{background:rgba(255,255,255,.1)}
-.btn-p{background:var(--gold);color:var(--navy);box-shadow:0 4px 16px rgba(200,147,26,.28)}
-.btn-p:hover{background:var(--gold-light);transform:translateY(-1px);box-shadow:0 6px 22px rgba(200,147,26,.38)}
-.btn-s{background:#1a9e6a;color:#fff;box-shadow:0 4px 16px rgba(26,158,106,.28)}
-.btn-s:hover{background:#20b878;transform:translateY(-1px)}
-
-footer{text-align:center;padding:16px;font-size:12px;color:rgba(255,255,255,.22);border-top:1px solid rgba(255,255,255,.06)}
-
-@keyframes su{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-
-@media(max-width:680px){
-  .topbar{padding:12px 14px}
-  .main{padding:18px 14px;gap:18px}
-  .hero{flex-direction:column;padding:22px 18px}
-  .hero-stats{flex-wrap:wrap;justify-content:center}
-  .step-btn .step-lbl{display:none}
-  .card{padding:20px 16px}
-  .btn-row{justify-content:stretch}
-  .btn{flex:1;text-align:center}
-}
+.c-icon svg{width:28px;height:28px;stroke:#3dbd8a;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.confirm h2{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#3dbd8a}
+.confirm p{font-size:13px;color:rgba(255,255,255,.48);max-width:380px;line-height:1.65}
+.refcode{font-size:17px;font-weight:700;letter-spacing:.1em;color:var(--gold2);background:rgba(200,147,26,.09);border:1px dashed rgba(200,147,26,.32);padding:8px 20px;border-radius:var(--rs)}
+.toast{position:fixed;bottom:22px;right:22px;z-index:999;background:rgba(18,40,70,.96);border:1px solid rgba(200,147,26,.28);border-radius:12px;padding:11px 17px;display:flex;align-items:center;gap:9px;font-size:13px;color:#fff;transform:translateY(80px);opacity:0;transition:all .35s cubic-bezier(.34,1.2,.64,1);pointer-events:none;max-width:340px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot-ok{background:#3dbd8a}.dot-err{background:#f08080}.dot-info{background:var(--gold2)}
+.admin-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px}
+.admin-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#fff}
+.admin-sub{font-size:12px;color:rgba(255,255,255,.38);margin-top:2px}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:11px;margin-bottom:20px}
+.stat-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:var(--r);padding:14px;text-align:center}
+.stat-num{font-size:24px;font-weight:700;font-family:'Playfair Display',serif;color:var(--gold2);line-height:1}
+.stat-lbl{font-size:10px;color:rgba(255,255,255,.38);letter-spacing:.06em;text-transform:uppercase;margin-top:4px}
+.search-bar{display:flex;gap:9px;margin-bottom:14px;flex-wrap:wrap}
+.search-bar input,.filter-sel{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:var(--rs);padding:8px 13px;font-family:'DM Sans',sans-serif;font-size:13px;color:#fff;outline:none;-webkit-appearance:none}
+.search-bar input{flex:1;min-width:180px}
+.search-bar input:focus{border-color:rgba(200,147,26,.48);box-shadow:0 0 0 3px rgba(200,147,26,.1)}
+.search-bar input::placeholder{color:rgba(255,255,255,.2)}
+.filter-sel option{background:#1C3A5E}
+.table-wrap{overflow-x:auto;border-radius:var(--r);border:1px solid rgba(255,255,255,.09)}
+.etable{width:100%;border-collapse:collapse;min-width:680px}
+.etable th{background:rgba(200,147,26,.11);font-size:10px;font-weight:600;color:var(--gold2);letter-spacing:.07em;text-transform:uppercase;padding:10px 13px;text-align:left;border-bottom:1px solid rgba(255,255,255,.08)}
+.etable td{padding:10px 13px;font-size:12px;color:rgba(255,255,255,.72);border-bottom:1px solid rgba(255,255,255,.05)}
+.etable tr:last-child td{border-bottom:none}
+.etable tr:hover td{background:rgba(255,255,255,.025)}
+.empty-state{text-align:center;padding:40px 20px;color:rgba(255,255,255,.28);font-size:13px}
+.abtn{padding:4px 9px;border-radius:6px;border:none;font-size:11px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.vbtn{background:rgba(200,147,26,.12);color:var(--gold2)}.vbtn:hover{background:rgba(200,147,26,.22)}
+.dbtn{background:rgba(220,80,80,.1);color:#f08080}.dbtn:hover{background:rgba(220,80,80,.18)}
+.badge{display:inline-block;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:600}
+.badge-new{background:rgba(61,189,138,.12);color:#3dbd8a}
+.badge-old{background:rgba(46,143,204,.12);color:#5bb8f5}
+.badge-tr{background:rgba(200,147,26,.12);color:var(--gold2)}
+.setup-alert{background:rgba(200,147,26,.07);border:1px solid rgba(200,147,26,.28);border-radius:12px;padding:15px 18px;margin-bottom:16px;display:flex;gap:13px;align-items:flex-start}
+.setup-alert svg{width:19px;height:19px;stroke:var(--gold2);fill:none;stroke-width:2;flex-shrink:0;margin-top:2px}
+.setup-alert p{font-size:12px;color:rgba(255,255,255,.62);line-height:1.7}
+.setup-alert a{color:var(--gold2);text-decoration:underline}
+.setup-alert code{background:rgba(255,255,255,.1);padding:1px 5px;border-radius:3px;font-size:11px;font-family:monospace;color:var(--gold2)}
+.config-card{background:rgba(255,255,255,.04);border:1px solid rgba(200,147,26,.18);border-radius:var(--r);padding:17px 19px;margin-bottom:14px}
+.config-card h3{font-size:13px;font-weight:600;color:var(--gold2);margin-bottom:11px;display:flex;align-items:center;gap:6px}
+.cstatus{display:flex;align-items:center;gap:6px;font-size:12px}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:#0E2240;border:1px solid rgba(200,147,26,.22);border-radius:16px;padding:26px;max-width:540px;width:100%;max-height:80vh;overflow-y:auto;position:relative}
+.modal h3{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:#fff;margin-bottom:14px}
+.modal-close{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.07);border:none;color:rgba(255,255,255,.5);width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center}
+.modal-close:hover{background:rgba(255,255,255,.13)}
+.msec{margin-bottom:13px}
+.msec h4{font-size:9px;font-weight:600;color:var(--gold2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px;padding-bottom:5px;border-bottom:1px solid rgba(255,255,255,.07)}
+.mrow{display:flex;justify-content:space-between;padding:3px 0}
+.mrow span:first-child{font-size:11px;color:rgba(255,255,255,.36)}
+.mrow span:last-child{font-size:12px;color:rgba(255,255,255,.8);font-weight:500;text-align:right;max-width:58%}
+@keyframes fu{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+footer{text-align:center;padding:14px;font-size:11px;color:rgba(255,255,255,.2);border-top:1px solid rgba(255,255,255,.05)}
+@media(max-width:640px){.topbar{padding:10px 13px}.main{padding:14px 12px;gap:14px}.hero{flex-direction:column;padding:18px 15px}.hero-stats{flex-wrap:wrap;justify-content:center}.card{padding:16px 13px}.step-btn .lbl{display:none}.btn-row{justify-content:stretch}.btn{flex:1;justify-content:center}.nav-tabs{gap:2px}.nav-tab{padding:6px 10px;font-size:11px}}
 </style>
 </head>
 <body>
-<div class="bg">
-  <div class="bg-orb1"></div><div class="bg-orb2"></div><div class="bg-orb3"></div>
-  <div class="bg-grid"></div>
-</div>
+<div class="bg"><div class="bg-orb1"></div><div class="bg-orb2"></div><div class="bg-grid"></div></div>
 <div class="app">
 
-  <header class="topbar">
-    <div class="topbar-brand">
-      <div class="logo-shield">CN</div>
-      <div>
-        <div class="brand-name">Concepcion National High School</div>
-        <div class="brand-sub">Online Enrollment System</div>
-      </div>
-    </div>
-    <div class="topbar-right">
-      <div class="sy-badge">S.Y. <span>2025 – 2026</span></div>
-      <div id="clock">--:-- --</div>
-    </div>
-  </header>
-
-  <div class="main">
-
-    <div class="hero">
-      <div class="hero-left">
-        <h1>Welcome to <span>CNHS</span> Enrollment Portal</h1>
-        <p>Concepcion National High School — Your Future Starts Here. Complete your enrollment for S.Y. 2025–2026 by filling out all required information accurately.</p>
-      </div>
-      <div class="hero-stats">
-        <div class="hstat"><div class="hstat-num" id="cntE">1,284</div><div class="hstat-lbl">Enrolled</div></div>
-        <div class="hstat"><div class="hstat-num" id="cntS">216</div><div class="hstat-lbl">Slots Left</div></div>
-        <div class="hstat"><div class="hstat-num">6</div><div class="hstat-lbl">Grade Levels</div></div>
-      </div>
-    </div>
-
-    <nav class="steps-nav">
-      <button class="step-btn active" onclick="goTo(0)"><span class="step-num">1</span><span class="step-lbl">Student Info</span></button>
-      <button class="step-btn" onclick="goTo(1)"><span class="step-num">2</span><span class="step-lbl">Academic</span></button>
-      <button class="step-btn" onclick="goTo(2)"><span class="step-num">3</span><span class="step-lbl">Family</span></button>
-      <button class="step-btn" onclick="goTo(3)"><span class="step-num">4</span><span class="step-lbl">Documents</span></button>
-      <button class="step-btn" onclick="goTo(4)"><span class="step-num">5</span><span class="step-lbl">Review</span></button>
-    </nav>
-
-    <div>
-      <div class="prog-bar"><div class="prog-fill" id="pf" style="width:20%"></div></div>
-      <div class="prog-lbl" id="pl">Step 1 of 5 — Student Information</div>
-    </div>
-
-    <!-- PANEL 0: STUDENT INFO -->
-    <div class="panel active" id="p0">
-      <div class="card">
-        <div class="card-title">Student Information</div>
-        <div class="card-sub">Enter the student's personal and contact details carefully.</div>
-
-        <div class="sec-head"><h3>Personal Details</h3></div>
-        <div class="fg">
-          <div class="fld"><label>Last Name *</label><input id="ln" placeholder="e.g., Dela Cruz"><span class="emsg">Required.</span></div>
-          <div class="fld"><label>First Name *</label><input id="fn" placeholder="e.g., Juan"><span class="emsg">Required.</span></div>
-          <div class="fld"><label>Middle Name</label><input id="mn" placeholder="e.g., Santos"></div>
-          <div class="fld"><label>Suffix</label><select id="sfx"><option value="">None</option><option>Jr.</option><option>Sr.</option><option>II</option><option>III</option></select></div>
-          <div class="fld"><label>Date of Birth *</label><input type="date" id="dob"><span class="emsg">Required.</span></div>
-          <div class="fld"><label>Sex *</label><select id="sex"><option value="">Select</option><option>Male</option><option>Female</option></select><span class="emsg">Required.</span></div>
-          <div class="fld"><label>Nationality</label><input id="nat" value="Filipino"></div>
-          <div class="fld"><label>Religion</label><input id="rel" placeholder="e.g., Roman Catholic"></div>
-        </div>
-
-        <div class="sec-head"><h3>Contact & Address</h3></div>
-        <div class="fg">
-          <div class="fld full"><label>Home Address *</label><input id="addr" placeholder="House No., Street, Barangay, Municipality, Province"><span class="emsg">Required.</span></div>
-          <div class="fld"><label>Contact Number</label><input type="tel" id="cnum" placeholder="09XX XXX XXXX"></div>
-          <div class="fld"><label>Email Address</label><input type="email" id="eml" placeholder="student@email.com"></div>
-        </div>
-
-        <div class="sec-head"><h3>Enrollment Type</h3></div>
-        <div class="rg">
-          <label class="rc sel"><input type="radio" name="et" value="New Student" checked onchange="selRc(this)"><span>New Student</span></label>
-          <label class="rc"><input type="radio" name="et" value="Old Student (Returning)" onchange="selRc(this)"><span>Old Student (Returning)</span></label>
-          <label class="rc"><input type="radio" name="et" value="Transfer Student" onchange="selRc(this)"><span>Transfer Student</span></label>
-        </div>
-
-        <div class="btn-row"><button class="btn btn-p" onclick="next(0)">Continue →</button></div>
-      </div>
-    </div>
-
-    <!-- PANEL 1: ACADEMIC -->
-    <div class="panel" id="p1">
-      <div class="card">
-        <div class="card-title">Academic Details</div>
-        <div class="card-sub">Specify grade level, section, and previous school information.</div>
-
-        <div class="sec-head"><h3>Grade & Section</h3></div>
-        <div class="fg">
-          <div class="fld"><label>Grade Level *</label><select id="gl" onchange="updSec()"><option value="">Select grade</option><option>Grade 7</option><option>Grade 8</option><option>Grade 9</option><option>Grade 10</option><option>Grade 11</option><option>Grade 12</option></select><span class="emsg">Required.</span></div>
-          <div class="fld"><label>Section</label><select id="sec"><option value="">Select grade first</option></select></div>
-          <div class="fld"><label>Track / Strand</label><select id="str"><option value="">N/A (Grade 7-10)</option><option>Academic – HUMSS</option><option>Academic – ABM</option><option>Academic – STEM</option><option>TVL – ICT</option><option>TVL – HE</option><option>TVL – IA</option><option>Sports Track</option><option>Arts &amp; Design</option></select></div>
-          <div class="fld"><label>LRN (12-digit)</label><input id="lrn" placeholder="Learner Reference Number" maxlength="12"></div>
-        </div>
-
-        <div class="sec-head"><h3>Previous School</h3></div>
-        <div class="fg">
-          <div class="fld full"><label>Previous School Name *</label><input id="ps" placeholder="Full name of last school attended"><span class="emsg">Required.</span></div>
-          <div class="fld"><label>School Address</label><input id="psa" placeholder="City / Municipality"></div>
-          <div class="fld"><label>Last Grade Completed *</label><select id="lg"><option value="">Select</option><option>Grade 6</option><option>Grade 7</option><option>Grade 8</option><option>Grade 9</option><option>Grade 10</option><option>Grade 11</option></select><span class="emsg">Required.</span></div>
-          <div class="fld"><label>S.Y. Completed</label><input id="syc" placeholder="e.g., 2024–2025"></div>
-          <div class="fld"><label>General Average</label><input type="number" id="ga" placeholder="e.g., 88" min="60" max="100"></div>
-        </div>
-
-        <div class="btn-row">
-          <button class="btn btn-g" onclick="prev(1)">← Back</button>
-          <button class="btn btn-p" onclick="next(1)">Continue →</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- PANEL 2: FAMILY -->
-    <div class="panel" id="p2">
-      <div class="card">
-        <div class="card-title">Family Information</div>
-        <div class="card-sub">Provide details about the student's parents or guardians.</div>
-
-        <div class="sec-head"><h3>Father's Information</h3></div>
-        <div class="fg">
-          <div class="fld"><label>Last Name</label><input id="fln" placeholder="Last name"></div>
-          <div class="fld"><label>First Name</label><input id="ffn" placeholder="First name"></div>
-          <div class="fld"><label>Middle Name</label><input id="fmn" placeholder="Middle name"></div>
-          <div class="fld"><label>Occupation</label><input id="fo" placeholder="e.g., Farmer, Driver"></div>
-          <div class="fld"><label>Contact Number</label><input type="tel" id="fc" placeholder="09XX XXX XXXX"></div>
-          <div class="fld"><label>Highest Education</label><select id="fe"><option value="">Select</option><option>Elementary Graduate</option><option>High School Graduate</option><option>Vocational / Technical</option><option>College Graduate</option><option>Post Graduate</option></select></div>
-        </div>
-
-        <div class="sec-head"><h3>Mother's Information</h3></div>
-        <div class="fg">
-          <div class="fld"><label>Last Name (Maiden)</label><input id="mln" placeholder="Maiden last name"></div>
-          <div class="fld"><label>First Name</label><input id="mfn" placeholder="First name"></div>
-          <div class="fld"><label>Middle Name</label><input id="mmn" placeholder="Middle name"></div>
-          <div class="fld"><label>Occupation</label><input id="mo" placeholder="e.g., Housewife, Teacher"></div>
-          <div class="fld"><label>Contact Number</label><input type="tel" id="mc" placeholder="09XX XXX XXXX"></div>
-          <div class="fld"><label>Highest Education</label><select id="me"><option value="">Select</option><option>Elementary Graduate</option><option>High School Graduate</option><option>Vocational / Technical</option><option>College Graduate</option><option>Post Graduate</option></select></div>
-        </div>
-
-        <div class="sec-head"><h3>Guardian (if different from parents)</h3></div>
-        <div class="fg">
-          <div class="fld"><label>Full Name</label><input id="gn" placeholder="Guardian's full name"></div>
-          <div class="fld"><label>Relationship</label><input id="gr" placeholder="e.g., Aunt, Grandparent"></div>
-          <div class="fld"><label>Contact Number</label><input type="tel" id="gc" placeholder="09XX XXX XXXX"></div>
-          <div class="fld full"><label>Address (if different)</label><input id="ga2" placeholder="Complete address of guardian"></div>
-        </div>
-
-        <div class="btn-row">
-          <button class="btn btn-g" onclick="prev(2)">← Back</button>
-          <button class="btn btn-p" onclick="next(2)">Continue →</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- PANEL 3: DOCUMENTS -->
-    <div class="panel" id="p3">
-      <div class="card">
-        <div class="card-title">Required Documents</div>
-        <div class="card-sub">Mark the documents you have prepared. Required items must be ready before enrollment is processed.</div>
-
-        <div class="sec-head"><h3>Mandatory Documents</h3></div>
-        <div class="doc-list">
-          <div class="doc-item">
-            <div class="doc-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
-            <div class="doc-info"><div class="doc-name">PSA Birth Certificate <span class="tag tag-r">Required</span></div><div class="doc-note">Philippine Statistics Authority certified copy</div></div>
-            <div class="doc-st" id="d0">Pending</div>
-            <button class="ubtn" onclick="markDoc(0,this)">Mark Ready</button>
-          </div>
-          <div class="doc-item">
-            <div class="doc-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 13h6M9 17h4"/></svg></div>
-            <div class="doc-info"><div class="doc-name">Report Card – Form 138 <span class="tag tag-r">Required</span></div><div class="doc-note">Most recent report card from previous school</div></div>
-            <div class="doc-st" id="d1">Pending</div>
-            <button class="ubtn" onclick="markDoc(1,this)">Mark Ready</button>
-          </div>
-          <div class="doc-item">
-            <div class="doc-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
-            <div class="doc-info"><div class="doc-name">Good Moral Certificate <span class="tag tag-r">Required</span></div><div class="doc-note">Signed by previous school principal or class adviser</div></div>
-            <div class="doc-st" id="d2">Pending</div>
-            <button class="ubtn" onclick="markDoc(2,this)">Mark Ready</button>
-          </div>
-          <div class="doc-item">
-            <div class="doc-icon"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
-            <div class="doc-info"><div class="doc-name">Form 9 – Certificate of Transfer <span class="tag tag-o">Transferees Only</span></div><div class="doc-note">Required only for students transferring from another school</div></div>
-            <div class="doc-st" id="d3">Pending</div>
-            <button class="ubtn" onclick="markDoc(3,this)">Mark Ready</button>
-          </div>
-        </div>
-
-        <div class="sec-head"><h3>Additional Documents</h3></div>
-        <div class="doc-list">
-          <div class="doc-item">
-            <div class="doc-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M7 20v-1a5 5 0 0110 0v1"/></svg></div>
-            <div class="doc-info"><div class="doc-name">1×1 ID Picture (2 copies)</div><div class="doc-note">White background, recent photo</div></div>
-            <div class="doc-st" id="d4">Pending</div>
-            <button class="ubtn" onclick="markDoc(4,this)">Mark Ready</button>
-          </div>
-          <div class="doc-item">
-            <div class="doc-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
-            <div class="doc-info"><div class="doc-name">Parent / Guardian Emergency Contact Form</div><div class="doc-note">Available at the school registrar's office</div></div>
-            <div class="doc-st" id="d5">Pending</div>
-            <button class="ubtn" onclick="markDoc(5,this)">Mark Ready</button>
-          </div>
-        </div>
-
-        <div class="btn-row">
-          <button class="btn btn-g" onclick="prev(3)">← Back</button>
-          <button class="btn btn-p" onclick="next(3)">Continue →</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- PANEL 4: REVIEW -->
-    <div class="panel" id="p4">
-      <div class="card">
-        <div class="card-title">Review &amp; Submit</div>
-        <div class="card-sub">Please review all information carefully before submitting. Contact the registrar for corrections after submission.</div>
-
-        <div class="smgrid" id="smg">
-          <div class="smb">
-            <h4>Personal Information</h4>
-            <div class="smrow"><span>Full Name</span><span id="r-name">—</span></div>
-            <div class="smrow"><span>Date of Birth</span><span id="r-dob">—</span></div>
-            <div class="smrow"><span>Sex</span><span id="r-sex">—</span></div>
-            <div class="smrow"><span>Address</span><span id="r-addr" style="max-width:150px;text-align:right;font-size:12px">—</span></div>
-            <div class="smrow"><span>Enrollment Type</span><span id="r-et">—</span></div>
-          </div>
-          <div class="smb">
-            <h4>Academic Details</h4>
-            <div class="smrow"><span>Grade Level</span><span id="r-gl">—</span></div>
-            <div class="smrow"><span>Section</span><span id="r-sec">—</span></div>
-            <div class="smrow"><span>Strand / Track</span><span id="r-str">—</span></div>
-            <div class="smrow"><span>LRN</span><span id="r-lrn">—</span></div>
-            <div class="smrow"><span>Previous School</span><span id="r-ps" style="max-width:150px;text-align:right;font-size:12px">—</span></div>
-          </div>
-          <div class="smb">
-            <h4>Family Information</h4>
-            <div class="smrow"><span>Father</span><span id="r-f">—</span></div>
-            <div class="smrow"><span>Mother</span><span id="r-m">—</span></div>
-            <div class="smrow"><span>Guardian</span><span id="r-g">—</span></div>
-          </div>
-          <div class="smb">
-            <h4>Documents Status</h4>
-            <div class="smrow"><span>PSA Birth Cert</span><span id="r-d0" class="tag">—</span></div>
-            <div class="smrow"><span>Form 138</span><span id="r-d1" class="tag">—</span></div>
-            <div class="smrow"><span>Good Moral</span><span id="r-d2" class="tag">—</span></div>
-            <div class="smrow"><span>Form 9</span><span id="r-d3" class="tag">—</span></div>
-          </div>
-        </div>
-
-        <div style="margin-top:18px;padding:14px 17px;background:rgba(200,147,26,.07);border:1px solid rgba(200,147,26,.22);border-radius:var(--rs)">
-          <p style="font-size:13px;color:rgba(255,255,255,.6);line-height:1.65">By submitting this form, I certify that all information provided is true and correct. I understand that providing false information may result in cancellation of enrollment in accordance with DepEd regulations.</p>
-        </div>
-
-        <div class="btn-row" id="sbrow">
-          <button class="btn btn-g" onclick="prev(4)">← Back</button>
-          <button class="btn btn-s" onclick="submit()">Submit Enrollment ✓</button>
-        </div>
-      </div>
-
-      <div class="confirm" id="conf">
-        <div class="c-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-        <h2>Enrollment Submitted!</h2>
-        <p>Your enrollment application for <strong style="color:rgba(255,255,255,.8)">Concepcion National High School</strong> has been received. Present this reference number to the Registrar's Office to complete your enrollment.</p>
-        <div class="refcode" id="rcode">CNHS-2025-0000</div>
-        <p style="font-size:12px;color:rgba(255,255,255,.35);margin-top:6px">Processing takes 3–5 business days. Keep this reference number for follow-up.</p>
-        <button class="btn btn-p" style="margin-top:8px" onclick="location.reload()">Enroll Another Student</button>
-      </div>
-    </div>
-
+<header class="topbar">
+  <div style="display:flex;align-items:center;gap:12px">
+    <div class="logo-shield">CN</div>
+    <div><div class="brand-name">Concepcion National High School</div><div class="brand-sub">Online Enrollment System</div></div>
   </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('enroll',this)">Enrollment Form</button>
+    <button class="nav-tab" onclick="showPage('admin',this)">Admin Dashboard</button>
+    <button class="nav-tab" onclick="showPage('config',this)">Email Setup</button>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <div class="sy-badge">S.Y. <span>2025–2026</span></div>
+    <div id="clock">--:-- --</div>
+  </div>
+</header>
 
-  <footer>&copy; 2025 Concepcion National High School &nbsp;·&nbsp; Ilocos Norte Division &nbsp;·&nbsp; Republic of the Philippines &nbsp;·&nbsp; DepEd</footer>
+<!-- ENROLLMENT PAGE -->
+<div class="page active" id="page-enroll">
+<div class="main">
+  <div class="hero">
+    <div>
+      <h1>Welcome to <span>CNHS</span> Enrollment Portal</h1>
+      <p>Concepcion National High School — Your Future Starts Here. Complete your enrollment for S.Y. 2025–2026. Your submission will be emailed to the registrar automatically.</p>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat"><div class="hstat-num" id="cntE">0</div><div class="hstat-lbl">Enrolled</div></div>
+      <div class="hstat"><div class="hstat-num" id="cntS">1500</div><div class="hstat-lbl">Slots</div></div>
+      <div class="hstat"><div class="hstat-num">6</div><div class="hstat-lbl">Grade Levels</div></div>
+    </div>
+  </div>
+  <nav class="steps-nav">
+    <button class="step-btn active" onclick="goTo(0)"><span class="step-num">1</span><span class="lbl">Student Info</span></button>
+    <button class="step-btn" onclick="goTo(1)"><span class="step-num">2</span><span class="lbl">Academic</span></button>
+    <button class="step-btn" onclick="goTo(2)"><span class="step-num">3</span><span class="lbl">Family</span></button>
+    <button class="step-btn" onclick="goTo(3)"><span class="step-num">4</span><span class="lbl">Documents</span></button>
+    <button class="step-btn" onclick="goTo(4)"><span class="step-num">5</span><span class="lbl">Review</span></button>
+  </nav>
+  <div>
+    <div class="prog-bar"><div class="prog-fill" id="pf" style="width:20%"></div></div>
+    <div class="prog-lbl" id="pl">Step 1 of 5 — Student Information</div>
+  </div>
+  <!-- P0 -->
+  <div class="panel active" id="p0"><div class="card">
+    <div class="card-title">Student Information</div>
+    <div class="card-sub">Enter the student's personal and contact details carefully.</div>
+    <div class="sec-head"><h3>Personal Details</h3></div>
+    <div class="fg">
+      <div class="fld"><label>Last Name *</label><input id="ln" placeholder="e.g., Dela Cruz"><span class="emsg">Required.</span></div>
+      <div class="fld"><label>First Name *</label><input id="fn" placeholder="e.g., Juan"><span class="emsg">Required.</span></div>
+      <div class="fld"><label>Middle Name</label><input id="mn" placeholder="e.g., Santos"></div>
+      <div class="fld"><label>Suffix</label><select id="sfx"><option value="">None</option><option>Jr.</option><option>Sr.</option><option>II</option><option>III</option></select></div>
+      <div class="fld"><label>Date of Birth *</label><input type="date" id="dob"><span class="emsg">Required.</span></div>
+      <div class="fld"><label>Sex *</label><select id="sex"><option value="">Select</option><option>Male</option><option>Female</option></select><span class="emsg">Required.</span></div>
+      <div class="fld"><label>Nationality</label><input id="nat" value="Filipino"></div>
+      <div class="fld"><label>Religion</label><input id="rel" placeholder="e.g., Roman Catholic"></div>
+    </div>
+    <div class="sec-head"><h3>Contact & Address</h3></div>
+    <div class="fg">
+      <div class="fld full"><label>Home Address *</label><input id="addr" placeholder="House No., Street, Barangay, Municipality, Province"><span class="emsg">Required.</span></div>
+      <div class="fld"><label>Contact Number</label><input type="tel" id="cnum" placeholder="09XX XXX XXXX"></div>
+      <div class="fld"><label>Email Address</label><input type="email" id="eml" placeholder="student@email.com"></div>
+    </div>
+    <div class="sec-head"><h3>Enrollment Type</h3></div>
+    <div class="rg">
+      <label class="rc sel"><input type="radio" name="et" value="New Student" checked onchange="selRc(this)"><span>New Student</span></label>
+      <label class="rc"><input type="radio" name="et" value="Old Student (Returning)" onchange="selRc(this)"><span>Old Student (Returning)</span></label>
+      <label class="rc"><input type="radio" name="et" value="Transfer Student" onchange="selRc(this)"><span>Transfer Student</span></label>
+    </div>
+    <div class="btn-row"><button class="btn btn-primary" onclick="nextStep(0)">Continue →</button></div>
+  </div></div>
+  <!-- P1 -->
+  <div class="panel" id="p1"><div class="card">
+    <div class="card-title">Academic Details</div>
+    <div class="card-sub">Specify grade level, section, and previous school information.</div>
+    <div class="sec-head"><h3>Grade & Section</h3></div>
+    <div class="fg">
+      <div class="fld"><label>Grade Level *</label><select id="gl" onchange="updSec()"><option value="">Select</option><option>Grade 7</option><option>Grade 8</option><option>Grade 9</option><option>Grade 10</option><option>Grade 11</option><option>Grade 12</option></select><span class="emsg">Required.</span></div>
+      <div class="fld"><label>Section</label><select id="sec2"><option value="">Select grade first</option></select></div>
+      <div class="fld"><label>Track / Strand</label><select id="str"><option value="">N/A (Grade 7-10)</option><option>Academic – HUMSS</option><option>Academic – ABM</option><option>Academic – STEM</option><option>TVL – ICT</option><option>TVL – HE</option><option>TVL – IA</option><option>Sports Track</option><option>Arts & Design</option></select></div>
+      <div class="fld"><label>LRN (12-digit)</label><input id="lrn" placeholder="Learner Reference Number" maxlength="12"></div>
+    </div>
+    <div class="sec-head"><h3>Previous School</h3></div>
+    <div class="fg">
+      <div class="fld full"><label>Previous School Name *</label><input id="ps" placeholder="Full name of last school attended"><span class="emsg">Required.</span></div>
+      <div class="fld"><label>School Address</label><input id="psa2" placeholder="City / Municipality"></div>
+      <div class="fld"><label>Last Grade Completed *</label><select id="lgc"><option value="">Select</option><option>Grade 6</option><option>Grade 7</option><option>Grade 8</option><option>Grade 9</option><option>Grade 10</option><option>Grade 11</option></select><span class="emsg">Required.</span></div>
+      <div class="fld"><label>S.Y. Completed</label><input id="syc" placeholder="e.g., 2024-2025"></div>
+      <div class="fld"><label>General Average</label><input type="number" id="ga" placeholder="e.g., 88" min="60" max="100"></div>
+    </div>
+    <div class="btn-row"><button class="btn btn-ghost" onclick="prevStep(1)">← Back</button><button class="btn btn-primary" onclick="nextStep(1)">Continue →</button></div>
+  </div></div>
+  <!-- P2 -->
+  <div class="panel" id="p2"><div class="card">
+    <div class="card-title">Family Information</div>
+    <div class="card-sub">Provide details about the student's parents or guardians.</div>
+    <div class="sec-head"><h3>Father's Information</h3></div>
+    <div class="fg">
+      <div class="fld"><label>Last Name</label><input id="fln" placeholder="Last name"></div>
+      <div class="fld"><label>First Name</label><input id="ffn" placeholder="First name"></div>
+      <div class="fld"><label>Occupation</label><input id="fo" placeholder="e.g., Farmer"></div>
+      <div class="fld"><label>Contact Number</label><input type="tel" id="fc" placeholder="09XX XXX XXXX"></div>
+    </div>
+    <div class="sec-head"><h3>Mother's Information</h3></div>
+    <div class="fg">
+      <div class="fld"><label>Last Name (Maiden)</label><input id="mln" placeholder="Maiden last name"></div>
+      <div class="fld"><label>First Name</label><input id="mfn" placeholder="First name"></div>
+      <div class="fld"><label>Occupation</label><input id="mo" placeholder="e.g., Housewife"></div>
+      <div class="fld"><label>Contact Number</label><input type="tel" id="mc" placeholder="09XX XXX XXXX"></div>
+    </div>
+    <div class="sec-head"><h3>Guardian (if applicable)</h3></div>
+    <div class="fg">
+      <div class="fld"><label>Full Name</label><input id="gn" placeholder="Guardian's full name"></div>
+      <div class="fld"><label>Relationship</label><input id="grel" placeholder="e.g., Aunt, Grandparent"></div>
+      <div class="fld"><label>Contact Number</label><input type="tel" id="gc" placeholder="09XX XXX XXXX"></div>
+      <div class="fld full"><label>Address</label><input id="gaddr" placeholder="Complete address of guardian"></div>
+    </div>
+    <div class="btn-row"><button class="btn btn-ghost" onclick="prevStep(2)">← Back</button><button class="btn btn-primary" onclick="nextStep(2)">Continue →</button></div>
+  </div></div>
+  <!-- P3 -->
+  <div class="panel" id="p3"><div class="card">
+    <div class="card-title">Required Documents</div>
+    <div class="card-sub">Mark the documents you have prepared before proceeding.</div>
+    <div class="sec-head"><h3>Mandatory Documents</h3></div>
+    <div class="doc-list">
+      <div class="doc-item"><div class="doc-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><div class="doc-info"><div class="doc-name">PSA Birth Certificate <span class="tag tag-r">Required</span></div><div class="doc-note">Philippine Statistics Authority certified copy</div></div><div class="doc-st" id="d0">Pending</div><button class="ubtn" onclick="markDoc(0,this)">Mark Ready</button></div>
+      <div class="doc-item"><div class="doc-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 13h6M9 17h4"/></svg></div><div class="doc-info"><div class="doc-name">Report Card – Form 138 <span class="tag tag-r">Required</span></div><div class="doc-note">Most recent report card from previous school</div></div><div class="doc-st" id="d1">Pending</div><button class="ubtn" onclick="markDoc(1,this)">Mark Ready</button></div>
+      <div class="doc-item"><div class="doc-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="doc-info"><div class="doc-name">Good Moral Certificate <span class="tag tag-r">Required</span></div><div class="doc-note">Signed by previous school principal or class adviser</div></div><div class="doc-st" id="d2">Pending</div><button class="ubtn" onclick="markDoc(2,this)">Mark Ready</button></div>
+      <div class="doc-item"><div class="doc-icon"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div><div class="doc-info"><div class="doc-name">Form 9 – Certificate of Transfer <span class="tag tag-o">Transferees Only</span></div><div class="doc-note">Required for students transferring from another school</div></div><div class="doc-st" id="d3">Pending</div><button class="ubtn" onclick="markDoc(3,this)">Mark Ready</button></div>
+    </div>
+    <div class="sec-head"><h3>Additional Documents</h3></div>
+    <div class="doc-list">
+      <div class="doc-item"><div class="doc-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M7 20v-1a5 5 0 0110 0v1"/></svg></div><div class="doc-info"><div class="doc-name">1x1 ID Picture (2 copies)</div><div class="doc-note">White background, recent photo</div></div><div class="doc-st" id="d4">Pending</div><button class="ubtn" onclick="markDoc(4,this)">Mark Ready</button></div>
+      <div class="doc-item"><div class="doc-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><div class="doc-info"><div class="doc-name">Parent / Guardian Emergency Contact Form</div><div class="doc-note">Available at the school registrar's office</div></div><div class="doc-st" id="d5">Pending</div><button class="ubtn" onclick="markDoc(5,this)">Mark Ready</button></div>
+    </div>
+    <div class="btn-row"><button class="btn btn-ghost" onclick="prevStep(3)">← Back</button><button class="btn btn-primary" onclick="nextStep(3)">Continue →</button></div>
+  </div></div>
+  <!-- P4 -->
+  <div class="panel" id="p4"><div class="card">
+    <div class="card-title">Review & Submit</div>
+    <div class="card-sub">Review all information. Upon submission, details will be emailed to daikiawmini@gmail.com.</div>
+    <div class="smgrid" id="smg">
+      <div class="smb"><h4>Personal</h4>
+        <div class="smrow"><span>Full Name</span><span id="r-name">—</span></div>
+        <div class="smrow"><span>Date of Birth</span><span id="r-dob">—</span></div>
+        <div class="smrow"><span>Sex</span><span id="r-sex">—</span></div>
+        <div class="smrow"><span>Address</span><span id="r-addr">—</span></div>
+        <div class="smrow"><span>Contact</span><span id="r-cnum">—</span></div>
+        <div class="smrow"><span>Enrollment Type</span><span id="r-et">—</span></div>
+      </div>
+      <div class="smb"><h4>Academic</h4>
+        <div class="smrow"><span>Grade Level</span><span id="r-gl">—</span></div>
+        <div class="smrow"><span>Section</span><span id="r-sec2">—</span></div>
+        <div class="smrow"><span>Strand</span><span id="r-str">—</span></div>
+        <div class="smrow"><span>LRN</span><span id="r-lrn">—</span></div>
+        <div class="smrow"><span>Previous School</span><span id="r-ps">—</span></div>
+        <div class="smrow"><span>General Average</span><span id="r-ga">—</span></div>
+      </div>
+      <div class="smb"><h4>Family</h4>
+        <div class="smrow"><span>Father</span><span id="r-f">—</span></div>
+        <div class="smrow"><span>Mother</span><span id="r-m">—</span></div>
+        <div class="smrow"><span>Guardian</span><span id="r-g">—</span></div>
+      </div>
+      <div class="smb"><h4>Documents</h4>
+        <div class="smrow"><span>PSA Birth Cert</span><span id="r-d0" class="tag">—</span></div>
+        <div class="smrow"><span>Form 138</span><span id="r-d1" class="tag">—</span></div>
+        <div class="smrow"><span>Good Moral</span><span id="r-d2" class="tag">—</span></div>
+        <div class="smrow"><span>Form 9</span><span id="r-d3" class="tag">—</span></div>
+      </div>
+    </div>
+    <div style="margin-top:14px;padding:12px 15px;background:rgba(200,147,26,.06);border:1px solid rgba(200,147,26,.18);border-radius:var(--rs)">
+      <p style="font-size:12px;color:rgba(255,255,255,.52);line-height:1.7">By submitting, I certify all information is true and correct. A notification email will be sent automatically to the school registrar at daikiawmini@gmail.com.</p>
+    </div>
+    <div class="btn-row" id="sbrow">
+      <button class="btn btn-ghost" onclick="prevStep(4)">← Back</button>
+      <button class="btn btn-success" id="submitBtn" onclick="submitEnrollment()">
+        <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        Submit & Send Email
+      </button>
+    </div>
+  </div>
+  <div class="confirm" id="conf">
+    <div class="c-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+    <h2>Enrollment Submitted!</h2>
+    <p>Your application has been received and a notification was sent to <strong style="color:rgba(255,255,255,.8)">daikiawmini@gmail.com</strong>. Present this reference number to the Registrar's Office.</p>
+    <div class="refcode" id="rcode">CNHS-2025-0000</div>
+    <p style="font-size:11px;color:rgba(255,255,255,.3);margin-top:4px">Processing takes 3–5 business days. Keep this reference number.</p>
+    <button class="btn btn-primary" style="margin-top:6px" onclick="resetForm()">Enroll Another Student</button>
+  </div>
+  </div>
+</div>
 </div>
 
+<!-- ADMIN PAGE -->
+<div class="page" id="page-admin">
+<div class="main">
+  <div class="admin-header">
+    <div><div class="admin-title">Admin Dashboard</div><div class="admin-sub">Real-time enrollment data — Concepcion National High School S.Y. 2025–2026</div></div>
+    <div style="display:flex;gap:9px;flex-wrap:wrap">
+      <button class="btn btn-ghost" style="font-size:12px;padding:8px 14px" onclick="exportCSV()">⬇ Export CSV</button>
+      <button class="btn btn-primary" style="font-size:12px;padding:8px 14px" onclick="refreshAdmin()">↻ Refresh</button>
+    </div>
+  </div>
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-num" id="a-total">0</div><div class="stat-lbl">Total Enrolled</div></div>
+    <div class="stat-card"><div class="stat-num" id="a-new">0</div><div class="stat-lbl">New Students</div></div>
+    <div class="stat-card"><div class="stat-num" id="a-old">0</div><div class="stat-lbl">Old Students</div></div>
+    <div class="stat-card"><div class="stat-num" id="a-transfer">0</div><div class="stat-lbl">Transferees</div></div>
+    <div class="stat-card"><div class="stat-num" id="a-male">0</div><div class="stat-lbl">Male</div></div>
+    <div class="stat-card"><div class="stat-num" id="a-female">0</div><div class="stat-lbl">Female</div></div>
+  </div>
+  <div class="search-bar">
+    <input id="adminSearch" placeholder="Search name, grade, section, LRN, reference..." oninput="renderTable()">
+    <select class="filter-sel" id="filterGrade" onchange="renderTable()"><option value="">All Grades</option><option>Grade 7</option><option>Grade 8</option><option>Grade 9</option><option>Grade 10</option><option>Grade 11</option><option>Grade 12</option></select>
+    <select class="filter-sel" id="filterType" onchange="renderTable()"><option value="">All Types</option><option>New Student</option><option>Old Student (Returning)</option><option>Transfer Student</option></select>
+  </div>
+  <div class="table-wrap">
+    <table class="etable">
+      <thead><tr><th>#</th><th>Reference No.</th><th>Full Name</th><th>Grade</th><th>Section</th><th>Type</th><th>Sex</th><th>Date Enrolled</th><th>Actions</th></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- CONFIG PAGE -->
+<div class="page" id="page-config">
+<div class="main">
+  <div class="admin-title" style="color:#fff;margin-bottom:4px">Email Setup — EmailJS</div>
+  <div class="admin-sub" style="margin-bottom:18px">Configure so enrollment forms are emailed to daikiawmini@gmail.com automatically on every submission.</div>
+  <div class="setup-alert">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <p>
+      <strong style="color:rgba(255,255,255,.85)">Free one-time setup — 200 emails/month free.</strong><br><br>
+      <strong style="color:rgba(255,255,255,.75)">Step 1.</strong> Go to <a href="https://www.emailjs.com" target="_blank">emailjs.com</a> and create a free account.<br>
+      <strong style="color:rgba(255,255,255,.75)">Step 2.</strong> Click <strong style="color:rgba(255,255,255,.75)">Add New Service</strong> → Choose Gmail → Sign in with <code>daikiawmini@gmail.com</code> → Copy the <strong style="color:rgba(255,255,255,.75)">Service ID</strong>.<br>
+      <strong style="color:rgba(255,255,255,.75)">Step 3.</strong> Click <strong style="color:rgba(255,255,255,.75)">Email Templates</strong> → Create New Template → paste the template text below → save → copy the <strong style="color:rgba(255,255,255,.75)">Template ID</strong>.<br>
+      <strong style="color:rgba(255,255,255,.75)">Step 4.</strong> Go to <strong style="color:rgba(255,255,255,.75)">Account → General → Public Key</strong> → copy it.<br>
+      <strong style="color:rgba(255,255,255,.75)">Step 5.</strong> Paste all three values in the fields below and click <strong style="color:rgba(255,255,255,.75)">Save Configuration</strong>.
+    </p>
+  </div>
+  <div class="config-card">
+    <h3>EmailJS Credentials</h3>
+    <div class="fg">
+      <div class="fld"><label>Public Key</label><input id="ej-pub" placeholder="Your EmailJS Public Key (e.g., aBcDeFgHiJ...)"></div>
+      <div class="fld"><label>Service ID</label><input id="ej-svc" placeholder="e.g., service_abc12345"></div>
+      <div class="fld"><label>Template ID</label><input id="ej-tpl" placeholder="e.g., template_xyz78901"></div>
+    </div>
+    <div style="margin-top:13px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <div class="cstatus" id="cstatus"><div class="toast-dot dot-info" style="width:8px;height:8px;border-radius:50%;flex-shrink:0"></div><span style="font-size:12px;color:rgba(255,255,255,.45)">Not configured yet</span></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost" style="font-size:12px;padding:7px 14px" onclick="testEmail()">Send Test Email</button>
+        <button class="btn btn-primary" style="font-size:12px;padding:7px 14px" onclick="saveConfig()">Save Configuration</button>
+      </div>
+    </div>
+  </div>
+  <div class="config-card">
+    <h3>Email Template (paste this into EmailJS Template Body)</h3>
+    <div style="background:rgba(0,0,0,.28);border-radius:var(--rs);padding:14px;font-size:12px;color:rgba(255,255,255,.65);font-family:monospace;line-height:1.85;white-space:pre-wrap;overflow-x:auto">New Enrollment — CNHS S.Y. 2025-2026
+
+Reference Number: {{ref_code}}
+Student Name: {{student_name}}
+Grade Level: {{grade_level}}
+Section: {{section}}
+Enrollment Type: {{enroll_type}}
+Date Submitted: {{date_submitted}}
+
+--- FULL DETAILS ---
+{{enrollment_data}}
+
+---
+Concepcion National High School
+Ilocos Norte Division — DepEd
+Online Enrollment System S.Y. 2025-2026</div>
+    <p style="font-size:11px;color:rgba(255,255,255,.32);margin-top:9px">Set the email template's <strong style="color:rgba(255,255,255,.5)">To Email</strong> field to <code>daikiawmini@gmail.com</code> in EmailJS. Also set Subject to: <code>New CNHS Enrollment - {{ref_code}} - {{student_name}}</code></p>
+  </div>
+</div>
+</div>
+
+<footer>&copy; 2025 Concepcion National High School &nbsp;·&nbsp; Ilocos Norte Division &nbsp;·&nbsp; Republic of the Philippines &nbsp;·&nbsp; DepEd</footer>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="moverlay" onclick="if(event.target===this)closeMod()">
+  <div class="modal">
+    <button class="modal-close" onclick="closeMod()">✕</button>
+    <h3 id="mtitle">Student Details</h3>
+    <div id="mbody"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><div class="toast-dot" id="tdot"></div><span id="tmsg"></span></div>
+
 <script>
+const { jsPDF } = window.jspdf;
+const TARGET = 'daikiawmini@gmail.com';
+const REC_KEY = 'cnhs_records_v2';
+const CFG_KEY = 'cnhs_ej_cfg';
+let records = [];
+let ejCfg = { pub:'', svc:'', tpl:'' };
+
+async function init() {
+  tick(); setInterval(tick,1000);
+  try { const r=await window.storage.get(REC_KEY,true); if(r) records=JSON.parse(r.value); } catch(e){records=[];}
+  try { const c=await window.storage.get(CFG_KEY,true); if(c){ ejCfg=JSON.parse(c.value); document.getElementById('ej-pub').value=ejCfg.pub||''; document.getElementById('ej-svc').value=ejCfg.svc||''; document.getElementById('ej-tpl').value=ejCfg.tpl||''; updateCStatus(); } } catch(e){}
+  updateCounts();
+}
+
+function tick(){const n=new Date(),h=n.getHours(),m=n.getMinutes(),s=n.getSeconds(),ap=h>=12?'PM':'AM',hh=h%12||12;document.getElementById('clock').textContent=`${hh}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')} ${ap}`;}
+
+function showPage(pg,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+pg).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  if(pg==='admin') refreshAdmin();
+}
+
 let cur=0;
-const labels=['Student Information','Academic Details','Family Information','Required Documents','Review & Submit'];
-const secs={'Grade 7':['7-Narra','7-Molave','7-Mahogany','7-Acacia'],'Grade 8':['8-Narra','8-Molave','8-Sampaguita','8-Ilang-Ilang'],'Grade 9':['9-Rizal','9-Bonifacio','9-Mabini','9-Luna'],'Grade 10':['10-Rizal','10-Bonifacio','10-Aguinaldo','10-Mabini'],'Grade 11':['11-STEM A','11-STEM B','11-ABM A','11-HUMSS A','11-TVL-ICT'],'Grade 12':['12-STEM A','12-ABM A','12-HUMSS A','12-TVL-ICT A']};
+const LABELS=['Student Information','Academic Details','Family Information','Required Documents','Review & Submit'];
+const SECS={'Grade 7':['7-Narra','7-Molave','7-Mahogany','7-Acacia'],'Grade 8':['8-Narra','8-Molave','8-Sampaguita','8-Ilang-Ilang'],'Grade 9':['9-Rizal','9-Bonifacio','9-Mabini','9-Luna'],'Grade 10':['10-Rizal','10-Bonifacio','10-Aguinaldo','10-Mabini'],'Grade 11':['11-STEM A','11-STEM B','11-ABM A','11-HUMSS A','11-TVL-ICT'],'Grade 12':['12-STEM A','12-ABM A','12-HUMSS A','12-TVL-ICT A']};
 const docRdy={};
 
-function clock(){const n=new Date(),h=n.getHours(),m=n.getMinutes(),s=n.getSeconds(),ap=h>=12?'PM':'AM',hh=h%12||12;document.getElementById('clock').textContent=`${hh}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')} ${ap}`;}
-setInterval(clock,1000);clock();
-
-function goTo(s){if(s>cur)return;show(s)}
-function show(s){
-  document.getElementById('p'+cur).classList.remove('active');
-  const bs=document.querySelectorAll('.step-btn');
-  bs[cur].classList.remove('active');
-  cur=s;
-  document.getElementById('p'+cur).classList.add('active');
-  bs[cur].classList.add('active');
-  document.getElementById('pf').style.width=Math.round(((cur+1)/5)*100)+'%';
-  document.getElementById('pl').textContent=`Step ${cur+1} of 5 — ${labels[cur]}`;
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function next(from){
-  if(!validate(from))return;
-  const bs=document.querySelectorAll('.step-btn');
-  bs[from].classList.remove('active');
-  bs[from].classList.add('done');
-  cur=from+1;
-  document.getElementById('p'+from).classList.remove('active');
-  document.getElementById('p'+cur).classList.add('active');
-  bs[cur].classList.add('active');
-  document.getElementById('pf').style.width=Math.round(((cur+1)/5)*100)+'%';
-  document.getElementById('pl').textContent=`Step ${cur+1} of 5 — ${labels[cur]}`;
-  if(cur===4)buildSummary();
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function prev(from){
-  document.getElementById('p'+from).classList.remove('active');
-  const bs=document.querySelectorAll('.step-btn');
-  bs[from].classList.remove('active');
-  cur=from-1;
-  document.getElementById('p'+cur).classList.add('active');
-  bs[cur].classList.remove('done');
-  bs[cur].classList.add('active');
-  document.getElementById('pf').style.width=Math.round(((cur+1)/5)*100)+'%';
-  document.getElementById('pl').textContent=`Step ${cur+1} of 5 — ${labels[cur]}`;
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function validate(step){
-  let ok=true;
-  if(step===0){ok=req('ln')&req('fn')&req('dob')&req('sex')&req('addr');}
-  if(step===1){ok=req('gl')&req('ps')&req('lg');}
-  return!!ok;
-}
-function req(id){
-  const el=document.getElementById(id),fld=el.closest('.fld');
-  if(!el.value.trim()){fld.classList.add('err');el.addEventListener('input',()=>fld.classList.remove('err'),{once:true});return false;}
-  fld.classList.remove('err');return true;
-}
+function goTo(s){if(s>cur)return;activate(s);}
+function nextStep(f){if(!validate(f))return;document.querySelectorAll('.step-btn')[f].classList.remove('active');document.querySelectorAll('.step-btn')[f].classList.add('done');activate(f+1);if(f+1===4)buildSummary();}
+function prevStep(f){document.querySelectorAll('.step-btn')[f].classList.remove('active');const bs=document.querySelectorAll('.step-btn');bs[f-1].classList.remove('done');activate(f-1);}
+function activate(s){document.getElementById('p'+cur).classList.remove('active');document.querySelectorAll('.step-btn')[cur].classList.remove('active');cur=s;document.getElementById('p'+s).classList.add('active');document.querySelectorAll('.step-btn')[s].classList.add('active');document.getElementById('pf').style.width=Math.round(((s+1)/5)*100)+'%';document.getElementById('pl').textContent=`Step ${s+1} of 5 — ${LABELS[s]}`;window.scrollTo({top:0,behavior:'smooth'});}
+function validate(s){let ok=true;if(s===0)ok=req('ln')&req('fn')&req('dob')&req('sex')&req('addr');if(s===1)ok=req('gl')&req('ps')&req('lgc');return!!ok;}
+function req(id){const el=document.getElementById(id),fld=el.closest('.fld');if(!el.value.trim()){fld.classList.add('err');el.addEventListener('input',()=>fld.classList.remove('err'),{once:true});return false;}fld.classList.remove('err');return true;}
 function selRc(el){document.querySelectorAll('.rc').forEach(c=>c.classList.remove('sel'));el.closest('.rc').classList.add('sel');}
-function updSec(){
-  const g=document.getElementById('gl').value,s=document.getElementById('sec');
-  s.innerHTML='<option value="">Select section</option>';
-  if(secs[g])secs[g].forEach(x=>{const o=document.createElement('option');o.textContent=x;s.appendChild(o);});
-}
-function markDoc(i,btn){
-  docRdy[i]=true;
-  const el=document.getElementById('d'+i);
-  el.textContent='Ready';el.classList.add('ok');
-  btn.textContent='✓ Marked';btn.disabled=true;btn.style.opacity='.5';
-}
+function updSec(){const g=document.getElementById('gl').value,s=document.getElementById('sec2');s.innerHTML='<option value="">Select section</option>';if(SECS[g])SECS[g].forEach(x=>{const o=document.createElement('option');o.textContent=x;s.appendChild(o);});}
+function markDoc(i,btn){docRdy[i]=true;const el=document.getElementById('d'+i);el.textContent='Ready';el.classList.add('ok');btn.textContent='✓ Ready';btn.disabled=true;}
 function v(id){return(document.getElementById(id)?.value||'').trim()||'—';}
+
 function buildSummary(){
-  const parts=[v('fn'),v('mn')!=='—'?v('mn')[0]+'.':'',v('ln'),v('sfx')!=='—'?v('sfx'):''].filter(x=>x&&x!=='—').join(' ');
+  const parts=[v('fn'),v('mn')!='—'?v('mn')[0]+'.':'',v('ln'),v('sfx')!='—'?v('sfx'):''].filter(x=>x&&x!='—').join(' ');
   document.getElementById('r-name').textContent=parts||'—';
   document.getElementById('r-dob').textContent=v('dob');
   document.getElementById('r-sex').textContent=v('sex');
   document.getElementById('r-addr').textContent=v('addr');
+  document.getElementById('r-cnum').textContent=v('cnum');
   const et=document.querySelector('input[name=et]:checked');
   document.getElementById('r-et').textContent=et?et.value:'—';
   document.getElementById('r-gl').textContent=v('gl');
-  document.getElementById('r-sec').textContent=v('sec');
+  document.getElementById('r-sec2').textContent=v('sec2');
   document.getElementById('r-str').textContent=v('str')||'N/A';
   document.getElementById('r-lrn').textContent=v('lrn');
   document.getElementById('r-ps').textContent=v('ps');
-  const ff=[v('ffn'),v('fln')].filter(x=>x!=='—').join(' ');
-  const mf=[v('mfn'),v('mln')].filter(x=>x!=='—').join(' ');
-  document.getElementById('r-f').textContent=ff||'—';
-  document.getElementById('r-m').textContent=mf||'—';
+  document.getElementById('r-ga').textContent=v('ga');
+  document.getElementById('r-f').textContent=[v('ffn'),v('fln')].filter(x=>x!='—').join(' ')||'—';
+  document.getElementById('r-m').textContent=[v('mfn'),v('mln')].filter(x=>x!='—').join(' ')||'—';
   document.getElementById('r-g').textContent=v('gn');
-  [0,1,2,3].forEach(i=>{
-    const el=document.getElementById('r-d'+i);
-    if(docRdy[i]){el.textContent='Ready';el.className='tag tag-g';}
-    else{el.textContent='Pending';el.className='tag tag-r';}
-  });
+  [0,1,2,3].forEach(i=>{const el=document.getElementById('r-d'+i);if(docRdy[i]){el.textContent='Ready';el.className='tag tag-g';}else{el.textContent='Pending';el.className='tag tag-r';}});
 }
-function submit(){
-  const ref='CNHS-2025-'+String(Math.floor(Math.random()*9000)+1000);
+
+function collectData(ref){
+  const et=document.querySelector('input[name=et]:checked');
+  return{ref,date:new Date().toLocaleString('en-PH',{year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'}),
+    personal:{lastName:v('ln'),firstName:v('fn'),middleName:v('mn'),suffix:v('sfx'),dob:v('dob'),sex:v('sex'),nationality:v('nat'),religion:v('rel'),address:v('addr'),contact:v('cnum'),email:v('eml'),enrollType:et?et.value:'New Student'},
+    academic:{grade:v('gl'),section:v('sec2'),strand:v('str'),lrn:v('lrn'),prevSchool:v('ps'),prevAddr:v('psa2'),lastGrade:v('lgc'),syCompleted:v('syc'),genAve:v('ga')},
+    family:{fatherLastName:v('fln'),fatherFirstName:v('ffn'),fatherOcc:v('fo'),fatherContact:v('fc'),motherLastName:v('mln'),motherFirstName:v('mfn'),motherOcc:v('mo'),motherContact:v('mc'),guardianName:v('gn'),guardianRel:v('grel'),guardianContact:v('gc'),guardianAddr:v('gaddr')},
+    documents:{psa:!!docRdy[0],form138:!!docRdy[1],goodMoral:!!docRdy[2],form9:!!docRdy[3],photo:!!docRdy[4],contactForm:!!docRdy[5]}};
+}
+
+function makePDF(d){
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const W=210,ML=18,MR=192;let y=0;
+  doc.setFillColor(11,31,58);doc.rect(0,0,W,297,'F');
+  doc.setFillColor(18,40,71);doc.rect(0,0,W,42,'F');
+  doc.setFillColor(200,147,26);doc.circle(W/2,22,11,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(11,31,58);
+  doc.text('CN',W/2,25,{align:'center'});
+  doc.setTextColor(255,255,255);doc.setFontSize(12);
+  doc.text('CONCEPCION NATIONAL HIGH SCHOOL',W/2,36,{align:'center'});
+  doc.setTextColor(200,147,26);doc.setFontSize(8.5);doc.setFont('helvetica','normal');
+  doc.text('ENROLLMENT APPLICATION — S.Y. 2025-2026',W/2,42,{align:'center'});
+  doc.setFillColor(200,147,26,0.18);doc.roundedRect(ML,46,MR-ML,10,2,2,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(230,170,40);
+  doc.text('REF: '+d.ref,ML+4,52.5);
+  doc.setTextColor(180,200,220);doc.text('DATE: '+d.date,MR-4,52.5,{align:'right'});
+  y=62;
+  function sec(t,yy){doc.setFillColor(200,147,26);doc.rect(ML,yy-3,3,5.5,'F');doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(200,147,26);doc.text(t.toUpperCase(),ML+5,yy);return yy+7;}
+  function row(l,val,yy){doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(160,180,210);doc.text(l+':',ML,yy);doc.setTextColor(230,235,245);doc.setFont('helvetica','bold');doc.text(String(val||'—'),ML+40,yy);return yy+5.5;}
+  function ln(yy){doc.setDrawColor(50,80,120);doc.setLineWidth(.25);doc.line(ML,yy,MR,yy);return yy+5;}
+  y=sec('Personal Information',y);
+  y=row('Last Name',d.personal.lastName,y);y=row('First Name',d.personal.firstName,y);y=row('Middle Name',d.personal.middleName,y);
+  y=row('Date of Birth',d.personal.dob,y);y=row('Sex',d.personal.sex,y);y=row('Nationality',d.personal.nationality,y);
+  y=row('Religion',d.personal.religion,y);y=row('Address',d.personal.address,y);
+  y=row('Contact',d.personal.contact,y);y=row('Email',d.personal.email,y);y=row('Enrollment Type',d.personal.enrollType,y);
+  y=ln(y);y=sec('Academic Details',y);
+  y=row('Grade Level',d.academic.grade,y);y=row('Section',d.academic.section,y);y=row('Strand/Track',d.academic.strand,y);
+  y=row('LRN',d.academic.lrn,y);y=row('Previous School',d.academic.prevSchool,y);y=row('Last Grade',d.academic.lastGrade,y);
+  y=row('S.Y. Completed',d.academic.syCompleted,y);y=row('General Average',d.academic.genAve,y);
+  y=ln(y);y=sec('Family Information',y);
+  y=row("Father's Name",[d.family.fatherFirstName,d.family.fatherLastName].filter(x=>x&&x!='—').join(' ')||'—',y);
+  y=row("Father's Occupation",d.family.fatherOcc,y);y=row("Father's Contact",d.family.fatherContact,y);
+  y=row("Mother's Name",[d.family.motherFirstName,d.family.motherLastName].filter(x=>x&&x!='—').join(' ')||'—',y);
+  y=row("Mother's Occupation",d.family.motherOcc,y);y=row("Mother's Contact",d.family.motherContact,y);
+  if(d.family.guardianName!='—'){y=row('Guardian',d.family.guardianName,y);y=row('Relationship',d.family.guardianRel,y);}
+  y=ln(y);y=sec('Documents Checklist',y);
+  [['PSA Birth Certificate',d.documents.psa],['Form 138 (Report Card)',d.documents.form138],['Good Moral Certificate',d.documents.goodMoral],['Form 9 (Transfer)',d.documents.form9],['1x1 ID Photo (2 copies)',d.documents.photo]].forEach(([l,ok])=>{y=row(l,ok?'READY':'PENDING',y);});
+  doc.setFillColor(14,34,64);doc.rect(0,274,W,23,'F');
+  doc.setFont('helvetica','italic');doc.setFontSize(6.5);doc.setTextColor(100,140,180);
+  doc.text('This is a computer-generated enrollment application form — Concepcion National High School, DepEd Ilocos Norte Division',W/2,281,{align:'center'});
+  doc.text('Reference: '+d.ref+' | For inquiries, contact the Registrar\'s Office during school hours.',W/2,287,{align:'center'});
+  return doc.output('datauristring').split(',')[1];
+}
+
+async function sendEmail(d){
+  if(!ejCfg.pub||!ejCfg.svc||!ejCfg.tpl)return false;
+  try{emailjs.init(ejCfg.pub);}catch(e){return false;}
+  const name=[d.personal.firstName,d.personal.lastName].filter(x=>x!='—').join(' ');
+  const body=`REFERENCE: ${d.ref}\nDATE: ${d.date}\n\n--- PERSONAL ---\nName: ${name}\nDOB: ${d.personal.dob} | Sex: ${d.personal.sex}\nAddress: ${d.personal.address}\nContact: ${d.personal.contact} | Email: ${d.personal.email}\nType: ${d.personal.enrollType}\n\n--- ACADEMIC ---\nGrade: ${d.academic.grade} | Section: ${d.academic.section}\nStrand: ${d.academic.strand} | LRN: ${d.academic.lrn}\nPrevious School: ${d.academic.prevSchool}\nLast Grade: ${d.academic.lastGrade} | Gen Ave: ${d.academic.genAve}\n\n--- FAMILY ---\nFather: ${d.family.fatherFirstName} ${d.family.fatherLastName} (${d.family.fatherOcc})\nMother: ${d.family.motherFirstName} ${d.family.motherLastName} (${d.family.motherOcc})\nGuardian: ${d.family.guardianName} (${d.family.guardianRel})\n\n--- DOCUMENTS ---\nPSA: ${d.documents.psa?'Ready':'Pending'} | Form 138: ${d.documents.form138?'Ready':'Pending'}\nGood Moral: ${d.documents.goodMoral?'Ready':'Pending'} | Form 9: ${d.documents.form9?'Ready':'Pending'}`;
+  try{
+    await emailjs.send(ejCfg.svc,ejCfg.tpl,{to_email:TARGET,student_name:name,ref_code:d.ref,grade_level:d.academic.grade,section:d.academic.section,enroll_type:d.personal.enrollType,date_submitted:d.date,enrollment_data:body});
+    return true;
+  }catch(e){console.error('EmailJS:',e);return false;}
+}
+
+async function submitEnrollment(){
+  const btn=document.getElementById('submitBtn');
+  btn.disabled=true;btn.innerHTML='<div class="spin"></div> Sending...';
+  const ref='CNHS-2025-'+String(Math.floor(Math.random()*90000)+10000);
+  const d=collectData(ref);
+  try{makePDF(d);}catch(e){console.warn('PDF:',e);}
+  const ok=await sendEmail(d);
+  records.push(d);
+  try{await window.storage.set(REC_KEY,JSON.stringify(records),true);}catch(e){}
+  updateCounts();
   document.getElementById('rcode').textContent=ref;
   document.getElementById('conf').classList.add('show');
-  document.getElementById('smg').style.opacity='.35';
+  document.getElementById('smg').style.opacity='.3';
   document.getElementById('sbrow').style.display='none';
-  const e=parseInt(document.getElementById('cntE').textContent.replace(',',''));
-  const s=parseInt(document.getElementById('cntS').textContent);
-  anim('cntE',e,e+1);anim('cntS',s,s-1);
+  showToast(ok?'Enrollment saved & email sent to '+TARGET:'Enrollment saved. Configure EmailJS to enable emails.',ok?'ok':'info');
   setTimeout(()=>window.scrollTo({top:99999,behavior:'smooth'}),200);
 }
-function anim(id,a,b){
-  const el=document.getElementById(id);let st=null;
-  function step(ts){if(!st)st=ts;const p=Math.min((ts-st)/700,1);el.textContent=Math.round(a+(b-a)*p).toLocaleString();if(p<1)requestAnimationFrame(step);}
-  requestAnimationFrame(step);
+
+function updateCounts(){
+  const n=records.length;
+  document.getElementById('cntE').textContent=n.toLocaleString();
+  document.getElementById('cntS').textContent=Math.max(0,1500-n).toLocaleString();
 }
+
+function resetForm(){location.reload();}
+
+function refreshAdmin(){
+  const n=records.length;
+  document.getElementById('a-total').textContent=n;
+  document.getElementById('a-new').textContent=records.filter(e=>e.personal.enrollType==='New Student').length;
+  document.getElementById('a-old').textContent=records.filter(e=>e.personal.enrollType==='Old Student (Returning)').length;
+  document.getElementById('a-transfer').textContent=records.filter(e=>e.personal.enrollType==='Transfer Student').length;
+  document.getElementById('a-male').textContent=records.filter(e=>e.personal.sex==='Male').length;
+  document.getElementById('a-female').textContent=records.filter(e=>e.personal.sex==='Female').length;
+  renderTable();
+}
+
+function renderTable(){
+  const q=(document.getElementById('adminSearch').value||'').toLowerCase();
+  const fg=document.getElementById('filterGrade').value;
+  const ft=document.getElementById('filterType').value;
+  const f=records.filter(e=>{
+    const nm=[e.personal.firstName,e.personal.lastName].join(' ').toLowerCase();
+    return(!q||nm.includes(q)||(e.academic.grade||'').toLowerCase().includes(q)||(e.academic.lrn||'').includes(q)||(e.ref||'').toLowerCase().includes(q))&&(!fg||e.academic.grade===fg)&&(!ft||e.personal.enrollType===ft);
+  });
+  const tb=document.getElementById('tbody');
+  if(!f.length){tb.innerHTML='<tr><td colspan="9"><div class="empty-state">No enrollment records found. Submit an enrollment to see it here.</div></td></tr>';return;}
+  tb.innerHTML=f.map((e,i)=>{
+    const nm=[e.personal.firstName,e.personal.lastName].filter(x=>x&&x!='—').join(' ');
+    const idx=records.indexOf(e);
+    let badge=e.personal.enrollType==='New Student'?'<span class="badge badge-new">New</span>':e.personal.enrollType==='Transfer Student'?'<span class="badge badge-tr">Transfer</span>':'<span class="badge badge-old">Old</span>';
+    return`<tr><td style="color:rgba(255,255,255,.3)">${i+1}</td><td style="color:var(--gold2);font-family:monospace;font-size:11px">${e.ref}</td><td style="font-weight:500;color:#fff">${nm}</td><td>${e.academic.grade||'—'}</td><td>${e.academic.section||'—'}</td><td>${badge}</td><td>${e.personal.sex||'—'}</td><td style="font-size:11px;color:rgba(255,255,255,.4)">${e.date}</td><td style="display:flex;gap:4px"><button class="abtn vbtn" onclick="viewRec(${idx})">View</button><button class="abtn dbtn" onclick="delRec(${idx})">Del</button></td></tr>`;
+  }).join('');
+}
+
+function viewRec(i){
+  const e=records[i];if(!e)return;
+  const nm=[e.personal.firstName,e.personal.lastName].filter(x=>x&&x!='—').join(' ');
+  document.getElementById('mtitle').textContent=nm+' — '+e.ref;
+  document.getElementById('mbody').innerHTML=`
+    <div class="msec"><h4>Personal</h4>${mr('Full Name',[e.personal.firstName,e.personal.middleName,e.personal.lastName,e.personal.suffix].filter(x=>x&&x!='—').join(' '))}${mr('DOB',e.personal.dob)}${mr('Sex',e.personal.sex)}${mr('Address',e.personal.address)}${mr('Contact',e.personal.contact)}${mr('Enrollment Type',e.personal.enrollType)}</div>
+    <div class="msec"><h4>Academic</h4>${mr('Grade',e.academic.grade)}${mr('Section',e.academic.section)}${mr('Strand',e.academic.strand)}${mr('LRN',e.academic.lrn)}${mr('Previous School',e.academic.prevSchool)}${mr('Gen. Ave',e.academic.genAve)}</div>
+    <div class="msec"><h4>Family</h4>${mr('Father',[e.family.fatherFirstName,e.family.fatherLastName].filter(x=>x!='—').join(' '))}${mr('Mother',[e.family.motherFirstName,e.family.motherLastName].filter(x=>x!='—').join(' '))}${mr('Guardian',e.family.guardianName)}</div>
+    <div class="msec"><h4>Documents</h4>${mr('PSA',e.documents.psa?'Ready':'Pending')}${mr('Form 138',e.documents.form138?'Ready':'Pending')}${mr('Good Moral',e.documents.goodMoral?'Ready':'Pending')}</div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn btn-primary" style="font-size:12px;padding:8px 14px" onclick="dlPDF(${i})">Download PDF</button>
+      <button class="btn btn-ghost" style="font-size:12px;padding:8px 14px" onclick="resend(${i})">Resend Email</button>
+    </div>`;
+  document.getElementById('moverlay').classList.add('open');
+}
+function mr(l,v){return`<div class="mrow"><span>${l}</span><span>${v||'—'}</span></div>`;}
+function closeMod(){document.getElementById('moverlay').classList.remove('open');}
+
+function dlPDF(i){
+  const e=records[i];if(!e)return;
+  const b=makePDF(e);
+  const a=document.createElement('a');
+  a.href='data:application/pdf;base64,'+b;
+  a.download='CNHS_'+e.ref+'_'+e.personal.lastName+'.pdf';
+  a.click();showToast('PDF downloaded!','ok');
+}
+
+async function resend(i){
+  const e=records[i];if(!e)return;
+  showToast('Resending email...','info');
+  const ok=await sendEmail(e);
+  showToast(ok?'Email resent to '+TARGET+'!':'Failed. Check Email Setup tab.',ok?'ok':'err');
+}
+
+async function delRec(i){
+  if(!confirm('Delete this enrollment record permanently?'))return;
+  records.splice(i,1);
+  try{await window.storage.set(REC_KEY,JSON.stringify(records),true);}catch(e){}
+  updateCounts();refreshAdmin();
+  showToast('Record deleted.','info');
+}
+
+function exportCSV(){
+  if(!records.length){showToast('No records to export.','err');return;}
+  const H=['Ref No','Date','Last Name','First Name','Middle','Sex','DOB','Address','Contact','Email','Type','Grade','Section','Strand','LRN','Prev School','Last Grade','Gen Ave','Father','Mother'];
+  const R=records.map(e=>[e.ref,e.date,e.personal.lastName,e.personal.firstName,e.personal.middleName,e.personal.sex,e.personal.dob,e.personal.address,e.personal.contact,e.personal.email,e.personal.enrollType,e.academic.grade,e.academic.section,e.academic.strand,e.academic.lrn,e.academic.prevSchool,e.academic.lastGrade,e.academic.genAve,[e.family.fatherFirstName,e.family.fatherLastName].join(' '),[e.family.motherFirstName,e.family.motherLastName].join(' ')].map(v=>`"${String(v||'').replace(/"/g,'""')}"`).join(','));
+  const csv=[H.join(','),...R].join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='CNHS_Enrollments_2025-2026.csv';a.click();
+  showToast('CSV exported!','ok');
+}
+
+async function saveConfig(){
+  ejCfg={pub:document.getElementById('ej-pub').value.trim(),svc:document.getElementById('ej-svc').value.trim(),tpl:document.getElementById('ej-tpl').value.trim()};
+  try{await window.storage.set(CFG_KEY,JSON.stringify(ejCfg),true);}catch(e){}
+  updateCStatus();showToast('Configuration saved!','ok');
+}
+
+function updateCStatus(){
+  const el=document.getElementById('cstatus');
+  if(ejCfg.pub&&ejCfg.svc&&ejCfg.tpl){el.innerHTML='<div class="toast-dot dot-ok" style="width:8px;height:8px;border-radius:50%;flex-shrink:0"></div><span style="font-size:12px;color:rgba(255,255,255,.6)">Configured — emails send to '+TARGET+'</span>';}
+  else{el.innerHTML='<div class="toast-dot dot-info" style="width:8px;height:8px;border-radius:50%;flex-shrink:0"></div><span style="font-size:12px;color:rgba(255,255,255,.42)">Not configured yet — emails will not send</span>';}
+}
+
+async function testEmail(){
+  if(!ejCfg.pub||!ejCfg.svc||!ejCfg.tpl){showToast('Save your credentials first.','err');return;}
+  showToast('Sending test email...','info');
+  const td={ref:'CNHS-TEST-0001',date:new Date().toLocaleString('en-PH'),personal:{lastName:'Student',firstName:'Test',middleName:'T',suffix:'',dob:'2010-01-01',sex:'Male',nationality:'Filipino',religion:'Roman Catholic',address:'Concepcion, Ilocos Norte',contact:'09001234567',email:'test@email.com',enrollType:'New Student'},academic:{grade:'Grade 7',section:'7-Narra',strand:'N/A',lrn:'123456789012',prevSchool:'Concepcion Central ES',prevAddr:'Concepcion',lastGrade:'Grade 6',syCompleted:'2024-2025',genAve:'88'},family:{fatherLastName:'Dela Cruz',fatherFirstName:'Juan',fatherOcc:'Farmer',fatherContact:'',motherLastName:'Santos',motherFirstName:'Maria',motherOcc:'Housewife',motherContact:'',guardianName:'—',guardianRel:'—',guardianContact:'',guardianAddr:''},documents:{psa:true,form138:true,goodMoral:true,form9:false,photo:true,contactForm:false}};
+  const ok=await sendEmail(td);
+  showToast(ok?'Test email sent to '+TARGET+'! Check your inbox.':'Test failed. Verify your credentials.',ok?'ok':'err');
+}
+
+let ttimer;
+function showToast(msg,type){
+  clearTimeout(ttimer);
+  const t=document.getElementById('toast'),d=document.getElementById('tdot');
+  document.getElementById('tmsg').textContent=msg;
+  d.className='toast-dot '+(type==='ok'?'dot-ok':type==='err'?'dot-err':'dot-info');
+  t.classList.add('show');ttimer=setTimeout(()=>t.classList.remove('show'),4500);
+}
+
+init();
 </script>
-</body>
-  </html>
+</body>                                                           
+</html>
